@@ -28,6 +28,11 @@ var checkParem = function(param){
 	return param === '' || param === null || param === undefined
 }
 
+var checkID = function(id){
+	return pokeList[id-1] !== undefined && pokeList[id-1] !== null
+}
+
+
 var pokeList = []
 
 app.get('/', function (req, res) {
@@ -47,13 +52,25 @@ app.put('/pokemon/:id', function (req, res) {
 		res.status(400).send({error:"Insufficient parameters: id and type2 are required"})		
 		return
 	}
-	let p = pokeList[req.params.id-1]
-	if(p === undefined){
+	if(!checkID(req.params.id)){
 		res.status(400).send({error:"Cannot update pokemon: Pokemon not found"})		
 		return
 	}	
 	p.type2 = req.body.type2
 	res.status(200).send(p)
+})
+
+app.delete('/pokemon/:id', function (req, res) {
+	if(checkParem(req.params.id)){
+		res.status(400).send({error:"Insufficient parameters: id is required"})		
+		return
+	}	
+	if(!checkID(req.params.id)){
+		res.status(400).send({error:"Cannot delete pokemon: Pokemon not found"})		
+		return
+	}	
+	delete pokeList[req.params.id-1]
+	res.sendStatus(204)
 })
 
 app.post('/pokemons', function (req, res) {
