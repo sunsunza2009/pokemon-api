@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const port = 3000
 
 app.use(express.json())
 
@@ -34,9 +33,11 @@ var checkID = function(id){
 
 
 var pokeList = []
+let p = createPokemon("Eevee", "Normal")
+pokeList.push(p)
 
 app.get('/', function (req, res) {
-	res.send(pokeList)
+	res.send({message:"Hello world"})
 })
 
 app.get('/pokemons', function (req, res) {
@@ -44,6 +45,14 @@ app.get('/pokemons', function (req, res) {
 })
 
 app.get('/pokemon/:id', function (req, res) {
+	if(checkParem(req.params.id)){
+		res.status(400).send({error:"Insufficient parameters: id is required"})		
+		return
+	}
+	if(!checkID(req.params.id)){
+		res.status(400).send({error:"Cannot get pokemon: Pokemon not found"})		
+		return
+	}
 	res.send(pokeList[req.params.id-1])
 })
 
@@ -56,6 +65,7 @@ app.put('/pokemon/:id', function (req, res) {
 		res.status(400).send({error:"Cannot update pokemon: Pokemon not found"})		
 		return
 	}	
+	let p = pokeList[req.params.id-1]
 	p.type2 = req.body.type2
 	res.status(200).send(p)
 })
@@ -80,8 +90,7 @@ app.post('/pokemons', function (req, res) {
 	}
 	let p = createPokemon(req.body.name, req.body.type)
 	pokeList.push(p)
-	console.log(req.body)
 	res.status(201).send(p)
 })
 
-app.listen(port, () => console.log(`Pokemon API listening on port ${port}`))
+module.exports = app
