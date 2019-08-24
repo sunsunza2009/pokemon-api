@@ -32,7 +32,7 @@ describe('Pokemon API', () => {
 	
 	describe('POST /pokemons', () => {
 		it('should return 201 with new pokemon', (done) => {
-			request(app).post('/pokemons').send({name: 'Charizard',type:"Fire"}).expect(200).end((err, res) => {
+			request(app).post('/pokemons').send({name: 'Charizard',type:"Fire"}).expect(201).end((err, res) => {
 				res.body.should.deep.include({name: 'Charizard',type:"Fire"})
 				done()
 			})
@@ -75,11 +75,11 @@ describe('Pokemon API', () => {
 	})
 })
 
-describe('Integration Test', () => {
+/*describe('Integration Test', () => {
 		it('GET /pokemons should return list of pokemons', (done) => {
 			request('http://localhost:3000').get('/pokemons').expect(200).end((err, res) => {
 				res.body.should.be.a('array')
 				done()
 			})
 		})
-})
+})*/
