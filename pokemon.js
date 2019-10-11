@@ -3,7 +3,7 @@ const ObjectID = require('mongodb').ObjectID
 
 var pokeList = []
 
-const DB_URL = "mongodb+srv://admin:admin@cluster0-vydnj.gcp.mongodb.net/admin?retryWrites=true&w=majority"
+const DB_URL = "mongodb+srv://admin:admin@cluster0-vydnj.gcp.mongodb.net/test?retryWrites=true&w=majority"
 const DB_Name = "example"
 const option = {useNewUrlParser: true,useUnifiedTopology: true}
 
@@ -45,22 +45,6 @@ var createPokemon = function(name, type){
 	return p
 }
 
-var checkID = async function(id){
-	if(id.length < 24)
-		return false
-	let collection = await Collection()
-	try{
-		var result = await collection.find({_id:ObjectID(id)}).count()
-		console.log(result)
-		return result > 0
-	}catch(err){
-		console.error(err)
-		return false
-	}finally{
-		client.close()
-	}
-}
-
 var save = async function(name, type){
 	let p = createPokemon(name, type)
 	let collection = await Collection()
@@ -97,23 +81,17 @@ var get = async function(id){
 		console.error(err)
 		return false
 	}finally{
-		client.close()
+		//client.close()
 	}
 }
 
-var update = async function(id,poke){
-	let p = {}
-	if(poke.name != undefined)
-		p.name = poke.name
-	if(poke.type != undefined)
-		p.type = poke.type
-	if(poke.type2 != undefined)
-		p.type2 = poke.type2
+var update = async function(poke){
 	let collection = await Collection()
 	try{
-		console.log(p)
-		var result = await collection.updateOne({_id:ObjectID(id)},{ $set: p})
-		return result
+		console.log(poke)
+		var result = await collection.updateOne({_id:ObjectID(poke._id)},
+			{ $set: { name: poke.name, type: poke.type, type2: poke.type2} })
+		return true
 	}catch(err){
 		console.error(err)
 		return false
@@ -122,11 +100,19 @@ var update = async function(id,poke){
 	}
 }
 
-var deletePoke = function(id){
-	delete pokemon.pokeList[id]
+var deletePoke = async function(id){
+	let collection = await Collection()
+	try{
+		var result = await collection.deleteOne({_id:ObjectID(id)})
+		return true
+	}catch(err){
+		console.error(err)
+		return false
+	}finally{
+		client.close()
+	}
 }
 
-module.exports.checkID = checkID
 module.exports.save = save
 module.exports.pokeList = pokeList
 module.exports.mock = mock
