@@ -3,7 +3,7 @@ const ObjectID = require('mongodb').ObjectID
 
 var pokeList = []
 
-const DB_URL = "mongodb+srv://admin:admin@cluster0-vydnj.gcp.mongodb.net/test?retryWrites=true&w=majority"
+let DB_URL = "mongodb+srv://admin:admin@cluster0-vydnj.gcp.mongodb.net/test?retryWrites=true&w=majority"
 const DB_Name = "example"
 const option = {useNewUrlParser: true,useUnifiedTopology: true}
 
@@ -17,7 +17,7 @@ class Pokemon{
 
 var collection, database, client
 var connect = async function(){
-	if(client != undefined)
+	if(client != undefined && client.isConnected)
 		return
 	client = await mongoCilent.connect(DB_URL, option).catch((err) => console.error(err))
 	database = client.db(DB_Name)
@@ -55,7 +55,7 @@ var save = async function(name, type){
 		console.error(err)
 		return false
 	}finally{
-		client.close()
+		//client.close()
 	}
 }
 
@@ -68,7 +68,7 @@ var getAll = async function(){
 		console.error(err)
 		return false
 	}finally{
-		client.close()
+		//client.close()
 	}
 }
 
@@ -96,7 +96,7 @@ var update = async function(poke){
 		console.error(err)
 		return false
 	}finally{
-		client.close()
+		//client.close()
 	}
 }
 
@@ -109,8 +109,12 @@ var deletePoke = async function(id){
 		console.error(err)
 		return false
 	}finally{
-		client.close()
+		//client.close()
 	}
+}
+
+var setDBUrl = function(url){
+	DB_URL = url
 }
 
 module.exports.save = save
@@ -120,3 +124,4 @@ module.exports.get = get
 module.exports.update = update
 module.exports.deletePoke = deletePoke
 module.exports.getAll = getAll
+module.exports.setDBUrl = setDBUrl
